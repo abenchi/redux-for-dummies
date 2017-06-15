@@ -1,4 +1,4 @@
-const { createStore } = require('redux');
+const { createStore, applyMiddleware } = require('redux');
 
 const defaultState = {
   courses: [
@@ -30,7 +30,13 @@ function reducer (state, action) {
   }
 }
 
-const store = createStore(reducer, defaultState);
+const logger = store =>next => action => {
+  console.log(`Middleware before: ${store.getState().courses.length}`)
+  next(action);
+  console.log(`Middleware after: ${store.getState().courses.length}`)
+}
+
+const store = createStore(reducer, defaultState, applyMiddleware(logger));
 
 function addView(viewFunc) {
   viewFunc(defaultState);
